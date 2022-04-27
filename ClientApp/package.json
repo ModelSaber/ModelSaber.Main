@@ -21,7 +21,7 @@
     "@graphql-codegen/typescript-operations": "^2.3.5",
     "@graphql-codegen/typescript-urql": "^3.5.6",
     "@types/bootstrap": "^5.1.9",
-    "@types/node": "^17.0.23",
+    "@types/node": "^17.0.29",
     "@types/react": "^17.0.43",
     "@types/react-dom": "^17.0.14",
     "cross-env": "^7.0.3",
