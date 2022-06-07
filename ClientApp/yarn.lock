@@ -1016,10 +1016,10 @@
     "@babel/helper-validator-option" "^7.16.7"
     "@babel/plugin-transform-typescript" "^7.16.7"
 
-"@babel/runtime-corejs3@^7.10.2", "@babel/runtime-corejs3@^7.14.9":
-  version "7.17.2"
-  resolved "https://registry.yarnpkg.com/@babel/runtime-corejs3/-/runtime-corejs3-7.17.2.tgz#fdca2cd05fba63388babe85d349b6801b008fd13"
-  integrity sha512-NcKtr2epxfIrNM4VOmPKO46TvDMCBhgi2CrSHaEarrz+Plk2K5r9QemmOFTGpZaoKnWoGH5MO+CzeRsih/Fcgg==
+"@babel/runtime-corejs3@^7.10.2", "@babel/runtime-corejs3@^7.16.5":
+  version "7.18.3"
+  resolved "https://registry.yarnpkg.com/@babel/runtime-corejs3/-/runtime-corejs3-7.18.3.tgz#52f0241a31e0ec61a6187530af6227c2846bd60c"
+  integrity sha512-l4ddFwrc9rnR+EJsHsh+TJ4A35YqQz/UqcjtlX2ov53hlJYG5CxtQmNZxyajwDVmCxwy++rtvGU5HazCK4W41Q==
   dependencies:
     core-js-pure "^3.20.2"
     regenerator-runtime "^0.13.4"
@@ -10600,12 +10600,12 @@ xmlchars@^2.2.0:
   resolved "https://registry.yarnpkg.com/xmlchars/-/xmlchars-2.2.0.tgz#060fe1bcb7f9c76fe2a17db86a9bc3ab894210cb"
   integrity sha512-JZnDKK8B0RCDw84FNdDAIpZK+JuJw+s7Lz8nksI7SIuU3UXJJslUthsi+uWBUYOwPFwW7W7PRLRfUKpxjtjFCw==
 
-xregexp@^5.1.0:
-  version "5.1.0"
-  resolved "https://registry.yarnpkg.com/xregexp/-/xregexp-5.1.0.tgz#c87e7ae5ffa5fdc520f898a467dcba02b0d391e9"
-  integrity sha512-PynwUWtXnSZr8tpQlDPMZfPTyv78EYuA4oI959ukxcQ0a9O/lvndLVKy5wpImzzA26eMxpZmnAXJYiQA13AtWA==
+xregexp@^5.1.1:
+  version "5.1.1"
+  resolved "https://registry.yarnpkg.com/xregexp/-/xregexp-5.1.1.tgz#6d3fe18819e3143aaf52f9284d34f49a59583ebb"
+  integrity sha512-fKXeVorD+CzWvFs7VBuKTYIW63YD1e1osxwQ8caZ6o1jg6pDAbABDG54LCIq0j5cy7PjRvGIq6sef9DYPXpncg==
   dependencies:
-    "@babel/runtime-corejs3" "^7.14.9"
+    "@babel/runtime-corejs3" "^7.16.5"
 
 xtend@^4.0.2:
   version "4.0.2"
