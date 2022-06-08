@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/src/favicon.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <base href="/" />
+  <!--
+      manifest.json provides metadata used when your web app is added to the
+      homescreen on Android. See https://developers.google.com/web/fundamentals/engage-and-retain/web-app-manifest/
+      -->
+
+  <link rel="manifest" href="/manifest.json">
+  <link rel="shortcut icon" href="/icon-512.png" type="image/png" sizes="512x512">
+  <link rel="shortcut icon" href="/icon-256.png" type="image/png" sizes="256x256">
+  <link rel="shortcut icon" href="/icon-128.png" type="image/png" sizes="128x128">
+  <link rel="shortcut icon" href="/icon-64.png" type="image/png" sizes="64x64">
+  <link rel="shortcut icon" href="/icon-32.png" type="image/png" sizes="32x32">
+  <link rel="prefetch" as="video/webm" href="isfmoment.webm">
+
+  <title>%REACT_APP_NAME%</title>
+  <style>
+    :root {
+      --bs-body-bg: #444444 !important;
+      --bs-body-color: #e9ecef !important;
+      --scrollbar-width: 14px;
+      --scrollbar-rounder: 1.25;
+    }
+
+    html {
+      background: var(--bs-body-bg);
+      background-attachment: fixed;
+      background-size: 23040px 1440px;
+      background-position-y: center;
+      min-height: 100vh;
+      /*Minify the scrollbar on firefox*/
+      /* scrollbar-width: thin; */
+    }
+
+    ::-webkit-scrollbar {
+      width: var(--scrollbar-width);
+      background-color: rgb(var(--bs-dark-rgb));
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #666;
+      border-top-left-radius: calc(var(--scrollbar-width)/var(--scrollbar-rounder));
+      border-bottom-left-radius: calc(var(--scrollbar-width)/var(--scrollbar-rounder));
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #888;
+    }
+
+    #root {
+      transition: opacity 1s;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .lds-roller-main {
+      position: fixed;
+      left: 0;
+      top: 0;
+      height: 100%;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 999999;
+    }
+
+    #lds-roller {
+      display: inline-block;
+      height: 100%;
+      width: 100%;
+      top: 0;
+      position: fixed;
+      transition: opacity 1s;
+    }
+
+    .loading-inactive {
+      visibility: hidden;
+    }
+
+    .loading-hidden {
+      opacity: 0;
+    }
+
+    svg.loader {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+    }
+
+    .background-blured {
+      filter: blur(5px);
+      height: 100%;
+      width: 100%;
+    }
+
+    .background-darken {
+      background-color: rgba(0, 0, 0, 0.3);
+      height: 100%;
+      width: 100%;
+    }
+
+    .st0 {
+      fill: url(#SVGID_1_);
+    }
+
+    .st1 {
+      fill: #ffffff;
+    }
+
+    .loader {
+      -webkit-animation: loading-anim 2s ease-in;
+      animation: loading-anim 2s ease-in;
+      -webkit-animation-iteration-count: infinite;
+      animation-iteration-count: infinite;
+      -webkit-animation-direction: normal;
+      animation-direction: normal;
+      -webkit-animation-fill-mode: forwards;
+      animation-fill-mode: forwards;
+      -webkit-animation-play-state: running;
+      animation-play-state: running;
+      -webkit-transform-origin: center center;
+      transform-origin: center center;
+    }
+
+    @-webkit-keyframes loading-anim {
+      0% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+      }
+
+      45% {
+        opacity: 0.5;
+        transform: translate(-50%, -50%) scale(0.75);
+      }
+
+      70% {
+        opacity: 0.5;
+        transform: translate(-50%, -50%) scale(1.25);
+      }
+
+      100% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+      }
+    }
+
+    @keyframes loading-anim {
+      0% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+      }
+
+      45% {
+        opacity: 0.5;
+        transform: translate(-50%, -50%) scale(0.75);
+      }
+
+      70% {
+        opacity: 0.5;
+        transform: translate(-50%, -50%) scale(1.25);
+      }
+
+      100% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+      }
+    }
+  </style>
+  <script>
+    window.onerror = function (message, source, lineno, colno) {
+      var error = document.createElement("div");
+      var message = [
+        'Message: ' + msg,
+        'URL: ' + url,
+        'Line: ' + lineNo,
+        'Column: ' + columnNo,
+        'Error object: ' + JSON.stringify(error)
+      ].join(' - ');
+      error.appendChild(document.createTextNode(message));
+      document.querySelector("body").append(error);
+    };
+  </script>
+</head>
+
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/index.tsx"></script>
+
+  <noscript>
+    You need to enable JavaScript to run this app.
+  </noscript>
+  <div class="lds-roller-main" id="lds-roller">
+    <svg width="200" height="200" viewBox="0 0 1000 1000" class="loader">
+      <g>
+        <linearGradient id="SVGID_1_" gradientUnits="userSpaceOnUse" x1="132.3545" y1="714.4818" x2="883.6826"
+          y2="276.1613">
+          <stop offset="0" style="stop-color:#BE10FF" />
+          <stop offset="1" style="stop-color:#1FCC9E" />
+        </linearGradient>
+        <path class="st0" d="M899.89,721.71V278.29c0-5.67-3.03-10.91-7.94-13.75L507.94,42.82c-4.91-2.84-10.96-2.84-15.88,0
+                          L108.04,264.54c-4.91,2.84-7.94,8.08-7.94,13.75v443.43c0,5.67,3.03,10.91,7.94,13.75l384.02,221.71
+                          c4.91,2.84,10.96,2.84,15.88,0l384.02-221.71C896.87,732.63,899.89,727.38,899.89,721.71z" />
+        <g>
+          <path class="st1" d="M731.66,368.56c45.23-24.27,94.99-36.55,144.81-36.88c-5-27.55-19.03-52.65-39.84-71.3
+                              C811.41,303.87,775.66,341.25,731.66,368.56z" />
+          <path class="st1" d="M268.34,368.55c-44-27.31-79.75-64.69-104.96-108.18c-20.81,18.65-34.84,43.74-39.84,71.3
+                              C173.35,332.01,223.11,344.29,268.34,368.55z" />
+          <path class="st1" d="M646.89,417.5c-91.72,49.21-202.06,49.21-293.78,0C444.24,474.05,500,573.83,500,681.54
+                              C500,573.82,555.76,474.05,646.89,417.5z" />
+          <path class="st1" d="M500,759.8c0,53.97-14.03,105.92-39.46,151.47c25.61,8.45,53.3,8.45,78.91,0
+                              C514.03,865.72,500,813.77,500,759.8z" />
+        </g>
+        <path class="st1" d="M860.3,219.27L562.97,47.61c-38.97-22.5-86.98-22.5-125.94,0L139.7,219.27
+                          c-38.97,22.5-62.97,64.07-62.97,109.07v343.32c0,44.99,24,86.57,62.97,109.07l297.33,171.66c38.97,22.5,86.98,22.5,125.94,0
+                          L860.3,780.73c38.97-22.5,62.97-64.08,62.97-109.07V328.34C923.27,283.34,899.27,241.77,860.3,219.27z M878.55,645.84
+                          c0,45-24,86.57-62.97,109.07l-252.6,145.84c-38.97,22.5-86.98,22.5-125.94,0l-252.6-145.84c-38.97-22.5-62.97-64.07-62.97-109.07
+                          V354.16c0-45,24-86.57,62.97-109.07l252.6-145.84c38.97-22.5,86.98-22.5,125.94,0l252.6,145.84
+                          c38.97,22.5,62.97,64.07,62.97,109.07V645.84z" />
+        <path class="st1" d="M297.23,669.05l90.96-107.13c2.12-2.5,1.42-6.31-1.44-7.9L204.82,453.18c-4.34-2.41-9.26,2.07-7.27,6.62
+                          l90.96,207.97C290.06,671.29,294.74,671.98,297.23,669.05z" />
+      </g>
+    </svg>
+  </div>
+  <div id="root">
+  </div>
+  <!--
+      This HTML file is a template.
+      If you open it directly in the browser, you will see an empty page.
+      
+      You can add webfonts, meta tags, or analytics to this file.
+      The build step will place the bundled scripts into the <body> tag.
+      
+      To begin the development, run `npm start` or `yarn start`.
+      To create a production bundle, use `npm run build` or `yarn build`.
+      -->
+</body>
+
+</html>

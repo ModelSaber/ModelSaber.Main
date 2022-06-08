@@ -21,9 +21,15 @@
     "downlevelIteration": true,
     "noFallthroughCasesInSwitch": true,
     "sourceMap": true,
-    "noEmit": true
+    "noEmit": true,
+    "useDefineForClassFields": true,
   },
   "include": [
-    "src"
+    "src",
+  ],
+  "references": [
+    {
+      "path": "./tsconfig.node.json"
+    }
   ]
 }
