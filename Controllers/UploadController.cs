@@ -38,11 +38,13 @@ namespace ModelSaber.Main.Controllers
                     case true:
                         {
                             dbModel = await HandleThumbnailFile(model, user);
+                            _dbContext.Models.Add(dbModel);
                             break;
                         }
                     default:
                         {
                             dbModel = await HandleThumbnailFile(model, user);
+                            dbModel.Status = Status.Unpublished & Status.ApprovalRequired;
                             break;
                         }
                 }
@@ -52,19 +54,17 @@ namespace ModelSaber.Main.Controllers
                 return BadRequest(e.Message);
             }
 
-            _dbContext.Models.Add(dbModel);
             await _dbContext.SaveChangesAsync();
-            _dbContext.Models.First(t => t.Uuid == dbModel.Uuid);
-            return Ok();
+            return Ok(_dbContext.Models.First(t => t.Uuid == dbModel.Uuid));
         }
 
         private async Task<Model> HandleThumbnailFile(UploadModel model, User? user)
         {
             if (user == null)
             {
-                //TODO add exception
+                throw new ArgumentNullException(nameof(user), "Invalid user");
             }
-            var dbModel = model.CreateModel(user?.Id ?? 0);
+            var dbModel = model.ModelId.HasValue ? _dbContext.Models.First(t => t.Id == model.ModelId.Value) : model.CreateModel(user?.Id ?? 0);
 
             await _fileService.HandleThumbnailFile(model.Img!, dbModel.Uuid, dbModel.ThumbnailExt!.Value);
 

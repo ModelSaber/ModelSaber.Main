@@ -13,6 +13,7 @@ using ModelSaber.Database;
 using ModelSaber.Models;
 using ModelSaber.Main.Controllers;
 using ModelSaber.Main.Helpers;
+// ReSharper disable ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
 
 namespace ModelSaber.Main.Services
 {
@@ -55,7 +56,7 @@ namespace ModelSaber.Main.Services
             if(user.Logon != null)
                 _dbContext.Logons.Remove(user.Logon);
 
-            var (token, userLogon) = generateToken(user, Guid.NewGuid());
+            var (token, userLogon) = GenerateToken(user, Guid.NewGuid());
             _dbContext.Logons.Add(userLogon);
             _dbContext.SaveChanges();
             return new AuthenticateResponse(user, token);
@@ -68,7 +69,7 @@ namespace ModelSaber.Main.Services
             return _dbContext.Logons.Include(t => t.User).FirstOrDefault(t => t.Id == guid)?.User;
         }
 
-        private (string, UserLogons) generateToken(User user, Guid newGuid)
+        private (string, UserLogons) GenerateToken(User user, Guid newGuid)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.UTF8.GetBytes(_appSettings.Secret);

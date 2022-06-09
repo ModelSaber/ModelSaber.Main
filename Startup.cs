@@ -15,6 +15,7 @@ using Microsoft.EntityFrameworkCore;
 using ModelSaber.Database;
 using ModelSaber.Main.Helpers;
 using ModelSaber.Main.Services;
+using Prometheus;
 
 namespace ModelSaber.Main
 {
@@ -74,6 +75,9 @@ namespace ModelSaber.Main
             app.UseSpaStaticFiles();
             app.UseResponseCompression();
             app.UseRouting();
+
+            app.UseHttpMetrics();
+            app.UseMetricServer();
 
             app.UseEndpoints(endpoints =>
             {
