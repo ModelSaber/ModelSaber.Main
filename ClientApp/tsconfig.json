@@ -21,7 +21,7 @@
     "downlevelIteration": true,
     "noFallthroughCasesInSwitch": true,
     "sourceMap": true,
-    "noEmit": true,
+    "noEmit": false,
     "useDefineForClassFields": true,
   },
   "include": [
