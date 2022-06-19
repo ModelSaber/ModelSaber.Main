@@ -378,5 +378,9 @@ MigrationBackup/
 
 # ignore css as we use scss
 /wwwroot/css
+
+# specific project files while debugging
 /ClientApp/public/images
+/ClientApp/public/models
 /ClientApp/build
+/temp
