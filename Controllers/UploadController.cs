@@ -44,7 +44,7 @@ namespace ModelSaber.Main.Controllers
                     default:
                         {
                             dbModel = await HandleThumbnailFile(model, user);
-                            dbModel.Status = Status.Unpublished & Status.ApprovalRequired;
+                            dbModel.Status = Status.Unpublished | Status.ApprovalRequired;
                             break;
                         }
                 }
@@ -124,7 +124,7 @@ namespace ModelSaber.Main.Controllers
                 Hash = GetHash(),
                 BuildVersion = header.BuildVersion,
                 MinVersion = header.MinVersion,
-                Status = Status.Unpublished & Status.ApprovalRequired,
+                Status = Status.Unpublished | Status.ApprovalRequired,
                 UnitySystem = header.UnitySystem,
                 UnitySystemVersion = header.UnitySystemVersion,
                 Uuid = Guid.NewGuid(),
