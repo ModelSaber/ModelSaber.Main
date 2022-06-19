@@ -33,9 +33,12 @@
   <ItemGroup>
     <!-- Don't publish the SPA source files, but do show them in the project files list -->
     <Compile Remove="ClientApp\**" />
+    <Compile Remove="temp\**" />
     <Content Remove="$(SpaRoot)**" />
     <Content Remove="ClientApp\**" />
+    <Content Remove="temp\**" />
     <EmbeddedResource Remove="ClientApp\**" />
+    <EmbeddedResource Remove="temp\**" />
     <None Remove="$(SpaRoot)**" />
     <None Remove="ClientApp\**" />
     <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
@@ -50,6 +53,7 @@
     <None Remove="Build" />
     <Content Remove="Publish" />
     <None Remove="ClientApp\**" />
+    <None Remove="temp\**" />
     <None Remove="Publish" />
   </ItemGroup>
 

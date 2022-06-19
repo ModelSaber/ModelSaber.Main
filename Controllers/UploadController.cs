@@ -67,6 +67,7 @@ namespace ModelSaber.Main.Controllers
             var dbModel = model.ModelId.HasValue ? _dbContext.Models.First(t => t.Id == model.ModelId.Value) : model.CreateModel(user?.Id ?? 0);
 
             await _fileService.HandleThumbnailFile(model.Img!, dbModel.Uuid, dbModel.ThumbnailExt!.Value);
+            await _fileService.HandleModelFile(model.Model!, dbModel.Uuid);
 
             return dbModel;
         }

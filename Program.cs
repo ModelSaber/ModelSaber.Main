@@ -51,7 +51,7 @@ namespace ModelSaber.Main
         //Create temp directory
         public static void CreateTempDirectory()
         {
-            var tempDir = Path.Combine(Path.GetTempPath(), Constants.TempDirectory);
+            var tempDir = Path.Combine(Directory.GetCurrentDirectory(), Constants.TempDirectory);
             if (!Directory.Exists(tempDir))
             {
                 Directory.CreateDirectory(tempDir);

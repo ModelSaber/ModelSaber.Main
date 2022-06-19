@@ -21,8 +21,8 @@ namespace ModelSaber.Main.Services
         private static readonly Dictionary<Guid, string> _thumbnailUploadQueue = new();
         private static readonly Dictionary<Guid, string> _modelUploadQueue = new();
         private readonly object _lock = new();
-        private readonly Summary ThumbnailsQueue = Metrics.CreateSummary("model_saber_thumbnails_queue_size", "Number of models in thumbnail upload queue");
-        private readonly Summary ModelsQueue = Metrics.CreateSummary("model_saber_models_queue_size", "Number of models in model upload queue");
+        private readonly Summary _thumbnailsQueue = Metrics.CreateSummary("model_saber_thumbnails_queue_size", "Number of models in thumbnail upload queue");
+        private readonly Summary _modelsQueue = Metrics.CreateSummary("model_saber_models_queue_size", "Number of models in model upload queue");
 
         private static readonly MagickGeometry _geometry = new()
         {
@@ -33,23 +33,30 @@ namespace ModelSaber.Main.Services
         };
 
         private readonly IServiceProvider _provider;
+        private readonly Timer _timer;
 
         public FileService(IServiceProvider provider)
         {
             _provider = provider;
-            var thread = new Thread(UploadScheduler);
-            thread.Start();
+            _timer = new Timer(UploadScheduler, null, 0, Constants.UploadSleepTime);
         }
 
-        private void UploadScheduler()
+        private void UploadScheduler(object? stateInfo)
         {
-            Thread.Sleep(Constants.UploadSleepTime);
-            lock (_lock)
+            try
             {
                 using var dbContext = _provider.CreateScope().ServiceProvider.GetRequiredService<ModelSaberDbContext>();
                 var thumbnailUploadQueueProcessed = new List<Guid>();
                 var modelUploadQueueProcessed = new List<Guid>();
-                foreach (var (id, file) in _thumbnailUploadQueue)
+                KeyValuePair<Guid, string>[] thumbnailUploadQueue;
+                KeyValuePair<Guid, string>[] modelUploadQueue;
+                lock (_lock)
+                {
+                    thumbnailUploadQueue = _thumbnailUploadQueue.ToArray();
+                    modelUploadQueue = _modelUploadQueue.ToArray();
+                }
+
+                foreach (var (id, file) in thumbnailUploadQueue)
                 {
                     if (Constants.UploadEnabled)
 #pragma warning disable CS0162
@@ -62,12 +69,14 @@ namespace ModelSaber.Main.Services
                     {
                         var thumbnail = dbContext.Models.First(t => t.Uuid == id).Thumbnail;
                         var path = Path.Combine(Directory.GetCurrentDirectory(), "ClientApp", "public", thumbnail);
+                        if (!Directory.Exists(Path.GetDirectoryName(path)))
+                            Directory.CreateDirectory(Path.GetDirectoryName(path)!);
                         File.Move(file, path);
                         thumbnailUploadQueueProcessed.Add(id);
                     }
                 }
-                thumbnailUploadQueueProcessed.ForEach(id => _thumbnailUploadQueue.Remove(id));
-                foreach (var (id, file) in _modelUploadQueue)
+
+                foreach (var (id, file) in modelUploadQueue)
                 {
                     if (Constants.UploadEnabled)
 #pragma warning disable CS0162
@@ -80,11 +89,22 @@ namespace ModelSaber.Main.Services
                     {
                         var model = dbContext.Models.First(t => t.Uuid == id);
                         var path = Path.Combine(Directory.GetCurrentDirectory(), "ClientApp", "public", "models", $"{id}.{model.Type.GetTypeExt()}");
+                        if (!Directory.Exists(Path.GetDirectoryName(path)))
+                            Directory.CreateDirectory(Path.GetDirectoryName(path)!);
                         File.Move(file, path);
                         modelUploadQueueProcessed.Add(id);
                     }
                 }
-                modelUploadQueueProcessed.ForEach(id => _modelUploadQueue.Remove(id));
+
+                lock (_lock)
+                {
+                    modelUploadQueueProcessed.ForEach(id => _modelUploadQueue.Remove(id));
+                    thumbnailUploadQueueProcessed.ForEach(id => _thumbnailUploadQueue.Remove(id));
+                }
+            }
+            catch (Exception e)
+            {
+                //TODO add logger
             }
         }
 
@@ -92,6 +112,13 @@ namespace ModelSaber.Main.Services
         {
             await using var modelStream = file.OpenReadStream();
             var tmp = new FileInfo(Path.Combine(Directory.GetCurrentDirectory(), Constants.TempDirectory, Guid.NewGuid().ToString("N")));
+            var tmpStream = tmp.OpenWrite();
+            await modelStream.CopyToAsync(tmpStream);
+            await tmpStream.DisposeAsync();
+            lock (_lock)
+            {
+                _modelUploadQueue.Add(modelId, tmp.FullName);
+            }
         }
 
         public async Task HandleThumbnailFile(IFormFile file, Guid modelId, ThumbnailEnum thumbnailType)
@@ -113,7 +140,7 @@ namespace ModelSaber.Main.Services
                 _thumbnailUploadQueue.Add(modelId, tmp.FullName);
             }
         }
-        
+
         private async Task<Stream> HandleThumbnailImage(Stream stream)
         {
             //check if image is 1:1 or larger or equal to 256x256
@@ -126,7 +153,7 @@ namespace ModelSaber.Main.Services
 
             //resize image if its above 512x512
             image.InterpolativeResize(_geometry, PixelInterpolateMethod.Bilinear);
-            
+
             //convert to webp
             var outputStream = new MemoryStream();
             await image.WriteAsync(outputStream, MagickFormat.WebP);
@@ -140,7 +167,7 @@ namespace ModelSaber.Main.Services
             var tmp = file.OpenWrite();
             await stream.CopyToAsync(tmp);
             await tmp.DisposeAsync();
-            
+
             //check if file is 1:1 or larger than 256x256
             var info = await FFProbe.AnalyseAsync(file.FullName);
             var width = info.VideoStreams[0].Width;
@@ -157,7 +184,7 @@ namespace ModelSaber.Main.Services
                 file.Delete();
                 throw new FormatException("Size not at or greater than 256x256");
             }
-            
+
             //convert to webm and resize if over 512x512
             var outputStream = new MemoryStream();
             await FFMpegArguments
@@ -175,9 +202,9 @@ namespace ModelSaber.Main.Services
                     .WithCustomArgument("-quality good")
                     .WithCustomArgument("-cpu-used 0"))
                 .ProcessAsynchronously();
-            
+
             file.Delete();
-            
+
             return outputStream;
         }
     }

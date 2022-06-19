@@ -100,7 +100,7 @@ namespace ModelSaber.Main
             using var scope = app.ApplicationServices.CreateScope();
             using var context = scope.ServiceProvider.GetService<ModelSaberDbContext>();
             context!.Database.Migrate();
-
+            var _ = scope.ServiceProvider.GetService<FileService>();
         }
     }
 }
