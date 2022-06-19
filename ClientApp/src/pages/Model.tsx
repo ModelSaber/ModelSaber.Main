@@ -44,7 +44,7 @@ export default function Model() {
                         </div>
                     </div>
                     {!mobile ? (<div className="row border-top pt-2 pb-2">
-                        <div className="col-6 text-center"><a href={`modelsaber:${model.type}:${model.uuid}`} className="h-100 w-100 btn btn-dark">One Click Install</a></div>
+                        <div className="col-6 text-center"><a href={`modelsaber:${model.type}:${model.id}`} className="h-100 w-100 btn btn-dark">One Click Install</a></div>
                         <div className="col-6 text-center"><a href={model.downloadPath} target="_blank" className="h-100 w-100 btn btn-dark" rel="noopener noreferrer">Download</a></div>
                     </div>) : (<></>)}
                     <div className="row border-top pt-1">

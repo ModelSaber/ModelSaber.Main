@@ -62,7 +62,7 @@ export class ModelCard extends Component<ModelFragment & { navigate: (path: stri
                     Tags
                     <br />
                     <div className="d-flex flex-wrap">
-                        {this.props.tags.map(t => (<div key={this.props.uuid + "/" + t.id} className="rounded-pill outline outline-light d-inline text-nowrap me-1 ps-2 pe-2 mt-1" style={{ fontSize: ".75rem" }}>{t.name}</div>))}
+                        {this.props.tags.map(t => (<div key={this.props.id + "/" + t.id} className="rounded-pill outline outline-light d-inline text-nowrap me-1 ps-2 pe-2 mt-1" style={{ fontSize: ".75rem" }}>{t.name}</div>))}
                     </div>
                 </div>
                 <div style={{ width: "100%", borderBottom: "1px solid rgba(0, 0, 0, 0.125)" }} />

@@ -1,7 +1,6 @@
 query GetModelFull($modelId: String!) {
     model(id: $modelId) {
         id
-        uuid
         name
         status
         platform

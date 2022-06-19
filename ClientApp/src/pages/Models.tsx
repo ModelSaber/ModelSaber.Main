@@ -27,7 +27,7 @@ export default function Models() {
             setSize={setSize}
             setFilter={setFilter} />
         <div className="d-flex flex-wrap justify-content-between" style={{ margin: "0 -30px" }}>
-            {data.models.items.map(model => (<ModelCard key={model.uuid} {...model} navigate={history} />))}
+            {data.models.items.map(model => (<ModelCard key={model.id} {...model} navigate={history} />))}
         </div>
         <ModelFilter
             filter={filter}

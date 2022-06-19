@@ -12,7 +12,7 @@ query GetModels($first: Int, $after: String, $nameFilter: String!, $modelType: T
 }
 
 fragment Model on ModelType {
-    uuid
+    id
     name
     status
     platform

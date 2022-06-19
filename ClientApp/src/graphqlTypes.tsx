@@ -16,6 +16,7 @@ export type Scalars = {
   Byte: any;
   /** The `DateTime` scalar type represents a date and time. `DateTime` expects timestamps to be formatted in accordance with the [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) standard. */
   DateTime: any;
+  Guid: any;
   UInt: any;
   /** Stringed representation of ulong due to javascript cant handle 64 bit large integers without derping */
   UInt64: any;
@@ -101,6 +102,7 @@ export type ModelSaberQueryModelsArgs = {
   last?: InputMaybe<Scalars['Int']>;
   modelType?: InputMaybe<TypeEnum>;
   nameFilter: Scalars['String'];
+  nsfw?: InputMaybe<Scalars['Boolean']>;
 };
 
 
@@ -119,7 +121,8 @@ export type ModelType = {
   description?: Maybe<Scalars['String']>;
   downloadPath: Scalars['String'];
   hash?: Maybe<Scalars['String']>;
-  id: Scalars['UInt'];
+  /** The id of the model */
+  id?: Maybe<Scalars['Guid']>;
   mainUser?: Maybe<UserType>;
   name: Scalars['String'];
   platform?: Maybe<Platform>;
@@ -129,7 +132,6 @@ export type ModelType = {
   type?: Maybe<TypeEnum>;
   userId?: Maybe<Scalars['UInt64']>;
   users?: Maybe<Array<Maybe<UserType>>>;
-  uuid: Scalars['ID'];
 };
 
 /** Information about pagination in a connection. */
@@ -203,6 +205,7 @@ export type TagTypeModelsArgs = {
   before?: InputMaybe<Scalars['String']>;
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
+  nsfw?: InputMaybe<Scalars['Boolean']>;
 };
 
 export enum TypeEnum {
@@ -251,6 +254,7 @@ export type UserTypeModelsArgs = {
   before?: InputMaybe<Scalars['String']>;
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
+  nsfw?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type VoteCompoundType = {
@@ -278,7 +282,7 @@ export type GetModelFullQueryVariables = Exact<{
 }>;
 
 
-export type GetModelFullQuery = { __typename?: 'ModelSaberQuery', model?: { __typename?: 'ModelType', id: any, uuid: string, name: string, status?: Status | null, platform?: Platform | null, type?: TypeEnum | null, description?: string | null, thumbnail: string, downloadPath: string, users?: Array<{ __typename?: 'UserType', name?: string | null, discordId?: any | null, id: any } | null> | null, tags?: Array<{ __typename?: 'TagType', name: string, id: any } | null> | null } | null };
+export type GetModelFullQuery = { __typename?: 'ModelSaberQuery', model?: { __typename?: 'ModelType', id?: any | null, name: string, status?: Status | null, platform?: Platform | null, type?: TypeEnum | null, description?: string | null, thumbnail: string, downloadPath: string, users?: Array<{ __typename?: 'UserType', name?: string | null, discordId?: any | null, id: any } | null> | null, tags?: Array<{ __typename?: 'TagType', name: string, id: any } | null> | null } | null };
 
 export type GetModelCursorsQueryVariables = Exact<{
   size?: InputMaybe<Scalars['Int']>;
@@ -295,9 +299,9 @@ export type GetModelsQueryVariables = Exact<{
 }>;
 
 
-export type GetModelsQuery = { __typename?: 'ModelSaberQuery', models?: { __typename?: 'ModelConnection', items?: Array<{ __typename?: 'ModelType', uuid: string, name: string, status?: Status | null, platform?: Platform | null, cursor: string, thumbnail: string, users?: Array<{ __typename?: 'UserType', name?: string | null, discordId?: any | null, id: any } | null> | null, tags?: Array<{ __typename?: 'TagType', name: string, id: any } | null> | null } | null> | null, pageInfo: { __typename?: 'PageInfo', endCursor?: string | null, hasNextPage: boolean, hasPreviousPage: boolean } } | null };
+export type GetModelsQuery = { __typename?: 'ModelSaberQuery', models?: { __typename?: 'ModelConnection', items?: Array<{ __typename?: 'ModelType', id?: any | null, name: string, status?: Status | null, platform?: Platform | null, cursor: string, thumbnail: string, users?: Array<{ __typename?: 'UserType', name?: string | null, discordId?: any | null, id: any } | null> | null, tags?: Array<{ __typename?: 'TagType', name: string, id: any } | null> | null } | null> | null, pageInfo: { __typename?: 'PageInfo', endCursor?: string | null, hasNextPage: boolean, hasPreviousPage: boolean } } | null };
 
-export type ModelFragment = { __typename?: 'ModelType', uuid: string, name: string, status?: Status | null, platform?: Platform | null, cursor: string, thumbnail: string, users?: Array<{ __typename?: 'UserType', name?: string | null, discordId?: any | null, id: any } | null> | null, tags?: Array<{ __typename?: 'TagType', name: string, id: any } | null> | null };
+export type ModelFragment = { __typename?: 'ModelType', id?: any | null, name: string, status?: Status | null, platform?: Platform | null, cursor: string, thumbnail: string, users?: Array<{ __typename?: 'UserType', name?: string | null, discordId?: any | null, id: any } | null> | null, tags?: Array<{ __typename?: 'TagType', name: string, id: any } | null> | null };
 
 export type GetModelVotesQueryVariables = Exact<{
   modelId: Scalars['String'];
@@ -324,7 +328,7 @@ export type GetUserVoteQuery = { __typename?: 'ModelSaberQuery', modelVote?: { _
 
 export const ModelFragmentDoc = gql`
     fragment Model on ModelType {
-  uuid
+  id
   name
   status
   platform
@@ -345,7 +349,6 @@ export const GetModelFullDocument = gql`
     query GetModelFull($modelId: String!) {
   model(id: $modelId) {
     id
-    uuid
     name
     status
     platform
