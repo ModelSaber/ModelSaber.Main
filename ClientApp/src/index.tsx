@@ -6,6 +6,7 @@ import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import registerServiceWorker from "./registerServiceWorker";
 import { Loader } from "./components/Loader";
+import { Auth } from "./components/Auth";
 const GQLClient = lazy(() => import("./components/GQLClient"));
 
 const baseUrl = document.getElementsByTagName("base")[0].getAttribute("href");
@@ -13,6 +14,7 @@ const rootElement = document.getElementById("root");
 const loaderbackground = document.getElementById("lds-roller");
 const uri = process.env.DEV ? process.env.REACT_APP_API_URL : "https://apimodelsaber.rainemods.io";
 export const mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
 class Index extends Component {
     componentDidMount() {
         if (window.location.pathname !== "/login") {
@@ -29,9 +31,11 @@ class Index extends Component {
             <React.StrictMode>
                 <Suspense fallback={<Loader />}>
                     <BrowserRouter basename={baseUrl}>
-                        <GQLClient uri={uri}>
-                            <App />
-                        </GQLClient>
+                        <Auth>
+                            <GQLClient uri={uri}>
+                                <App />
+                            </GQLClient>
+                        </Auth>
                     </BrowserRouter>
                 </Suspense>
             </React.StrictMode>

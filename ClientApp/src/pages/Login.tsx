@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { unicodeWord } from "../App";
-import { events } from "../App";
+import { useLogin } from "../components/Auth";
 
 export default function DiscordRedirLogin() {
     // const [requireName, setRequireName] = useState(false);
+    const { login, updateLogin } = useLogin();
     const [discordObj, setDiscordObj] = useState({ discordId: "", email: "", name: "", avatar: "" });
     const navigate = useNavigate();
 
@@ -49,8 +50,10 @@ export default function DiscordRedirLogin() {
 
     async function loginUser(obj: { discordId: string, email: string, name: string, avatar: string }) {
         await fetch("api/login", { body: JSON.stringify(obj), method: "POST", headers: { "Content-Type": "application/json" } });
-        events.emitLogin();
-        navigate("/");
+        updateLogin();
     }
+    useEffect(() => {
+        navigate("/");
+    }, [login]);
     return (<></>);
 };
