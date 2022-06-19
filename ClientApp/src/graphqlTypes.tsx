@@ -57,6 +57,8 @@ export type ModelSaberMutationVoteArgs = {
 
 export type ModelSaberQuery = {
   __typename?: 'ModelSaberQuery';
+  /** Returns the time the API was built. */
+  buildTime?: Maybe<Scalars['DateTime']>;
   /** Single model */
   model?: Maybe<ModelType>;
   /** Lists cursors based on pagination size */
@@ -71,6 +73,8 @@ export type ModelSaberQuery = {
   tags?: Maybe<TagConnection>;
   /** The entire user list */
   users?: Maybe<Array<Maybe<UserType>>>;
+  /** Returns the current version of the API. */
+  version?: Maybe<Scalars['String']>;
 };
 
 
@@ -125,10 +129,13 @@ export type ModelType = {
   id?: Maybe<Scalars['Guid']>;
   mainUser?: Maybe<UserType>;
   name: Scalars['String'];
+  /** The platform the model is for */
   platform?: Maybe<Platform>;
-  status?: Maybe<Status>;
+  /** The status of the model */
+  status?: Maybe<Array<Maybe<Status>>>;
   tags?: Maybe<Array<Maybe<TagType>>>;
   thumbnail: Scalars['String'];
+  /** What model type it is */
   type?: Maybe<TypeEnum>;
   userId?: Maybe<Scalars['UInt64']>;
   users?: Maybe<Array<Maybe<UserType>>>;
@@ -282,7 +289,7 @@ export type GetModelFullQueryVariables = Exact<{
 }>;
 
 
-export type GetModelFullQuery = { __typename?: 'ModelSaberQuery', model?: { __typename?: 'ModelType', id?: any | null, name: string, status?: Status | null, platform?: Platform | null, type?: TypeEnum | null, description?: string | null, thumbnail: string, downloadPath: string, users?: Array<{ __typename?: 'UserType', name?: string | null, discordId?: any | null, id: any } | null> | null, tags?: Array<{ __typename?: 'TagType', name: string, id: any } | null> | null } | null };
+export type GetModelFullQuery = { __typename?: 'ModelSaberQuery', model?: { __typename?: 'ModelType', id?: any | null, name: string, status?: Array<Status | null> | null, platform?: Platform | null, type?: TypeEnum | null, description?: string | null, thumbnail: string, downloadPath: string, users?: Array<{ __typename?: 'UserType', name?: string | null, discordId?: any | null, id: any } | null> | null, tags?: Array<{ __typename?: 'TagType', name: string, id: any } | null> | null } | null };
 
 export type GetModelCursorsQueryVariables = Exact<{
   size?: InputMaybe<Scalars['Int']>;
@@ -299,9 +306,9 @@ export type GetModelsQueryVariables = Exact<{
 }>;
 
 
-export type GetModelsQuery = { __typename?: 'ModelSaberQuery', models?: { __typename?: 'ModelConnection', items?: Array<{ __typename?: 'ModelType', id?: any | null, name: string, status?: Status | null, platform?: Platform | null, cursor: string, thumbnail: string, users?: Array<{ __typename?: 'UserType', name?: string | null, discordId?: any | null, id: any } | null> | null, tags?: Array<{ __typename?: 'TagType', name: string, id: any } | null> | null } | null> | null, pageInfo: { __typename?: 'PageInfo', endCursor?: string | null, hasNextPage: boolean, hasPreviousPage: boolean } } | null };
+export type GetModelsQuery = { __typename?: 'ModelSaberQuery', models?: { __typename?: 'ModelConnection', items?: Array<{ __typename?: 'ModelType', id?: any | null, name: string, status?: Array<Status | null> | null, platform?: Platform | null, cursor: string, thumbnail: string, users?: Array<{ __typename?: 'UserType', name?: string | null, discordId?: any | null, id: any } | null> | null, tags?: Array<{ __typename?: 'TagType', name: string, id: any } | null> | null } | null> | null, pageInfo: { __typename?: 'PageInfo', endCursor?: string | null, hasNextPage: boolean, hasPreviousPage: boolean } } | null };
 
-export type ModelFragment = { __typename?: 'ModelType', id?: any | null, name: string, status?: Status | null, platform?: Platform | null, cursor: string, thumbnail: string, users?: Array<{ __typename?: 'UserType', name?: string | null, discordId?: any | null, id: any } | null> | null, tags?: Array<{ __typename?: 'TagType', name: string, id: any } | null> | null };
+export type ModelFragment = { __typename?: 'ModelType', id?: any | null, name: string, status?: Array<Status | null> | null, platform?: Platform | null, cursor: string, thumbnail: string, users?: Array<{ __typename?: 'UserType', name?: string | null, discordId?: any | null, id: any } | null> | null, tags?: Array<{ __typename?: 'TagType', name: string, id: any } | null> | null };
 
 export type GetModelVotesQueryVariables = Exact<{
   modelId: Scalars['String'];

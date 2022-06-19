@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { mobile } from "../..";
-import { ModelFragment } from "../../graphqlTypes";
+import { ModelFragment, Status } from "../../graphqlTypes";
 import { GetTumbnail } from "./GetTumbnail";
 
 export class ModelCard extends Component<ModelFragment & { navigate: (path: string) => void; }> {
@@ -14,21 +14,15 @@ export class ModelCard extends Component<ModelFragment & { navigate: (path: stri
     }
 
     getCheckColor() {
-        switch (this.props.status) {
-            case "APPROVED":
-                return "bg-success";
-            default:
-                return "bg-warning";
-        }
+        if (this.props.status.includes(Status.Approved))
+            return "bg-success";
+        return "bg-warning";
     }
 
     getStatusIconType() {
-        switch (this.props.status) {
-            case "APPROVED":
-                return (<i className="bi bi-check2" />);
-            default:
-                return (<i className="bi bi-question" />);
-        }
+        if (this.props.status.includes(Status.Approved))
+            return (<i className="bi bi-check2" />);
+        return (<i className="bi bi-question" />);
     }
 
     getPlatformIcon() {
