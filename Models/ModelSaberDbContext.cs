@@ -193,7 +193,12 @@ namespace ModelSaber.Database
             var user = envUser.TryGetValue("postgres");
             var host = envHost.TryGetValue("localhost");
 
+#if DEBUG
+            return $"Host={host};Database={db};Username={user};Password={password};Include Error Detail=true";
+#else
             return $"Host={host};Database={db};Username={user};Password={password}";
+#endif
+
         }
     }
 
