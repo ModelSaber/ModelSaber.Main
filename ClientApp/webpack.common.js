@@ -2,6 +2,7 @@ const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const dotenv = require('dotenv');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = (params, dev) => {
     const env = dotenv.config({ path: './.env' }).parsed;
@@ -12,7 +13,7 @@ module.exports = (params, dev) => {
         else
             prev[`process.env.${next}`] = env[next];
         return prev;
-    }, { 'process.env.DEV': dev, 'process.env.PROD': !dev });
+    }, { 'process.env.DEV': dev, 'process.env.PROD': !dev, 'process.env.BASE_URL': '"/"' });
     return {
         entry: './src/index.tsx',
         output: {
@@ -39,8 +40,7 @@ module.exports = (params, dev) => {
                         {
                             loader: 'file-loader',
                             options: {
-                                name: '[name].[ext]',
-                                outputPath: 'fonts/'
+                                name: 'assets/[name][ext][query]'
                             }
                         }],
                 },
@@ -91,6 +91,13 @@ module.exports = (params, dev) => {
                     filename: 'styles.[chunkhash].css',
                 }
             ),
+            new CopyWebpackPlugin({
+                patterns: [
+                    { from: 'public/*.png', to: '[name][ext]' },
+                    { from: 'public/*.svg', to: '[name][ext]' },
+                    { from: 'public/*.webm', to: '[name][ext]' },
+                ]
+            })
         ]
     }
 };
