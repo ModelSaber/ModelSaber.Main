@@ -15,12 +15,15 @@ jobs:
     - name: Add github nuget repo
       run: dotnet nuget add source --username ${{ secrets.RUNNER_USER }} --password ${{ secrets.RUNNER_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/ModelSaber/index.json"
 
-    - name: Version  
-      id: version  
-      uses: juliansangillo/tag-version@v1
+    - name: Bump version and push tag
+      id: version
+      uses: mathieudutour/github-tag-action@v6.0
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
 
     - uses: actions/cache@v2
       id: yarn-cache
+      if: ${{ steps.version.outputs.new_tag != "" }}
       with:
         path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
         key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
@@ -28,17 +31,20 @@ jobs:
           ${{ runner.os }}-yarn-
     
     - name: Install deps
+      if: ${{ steps.version.outputs.new_tag != "" }}
       run: |
         dotnet restore
         cd ClientApp
         yarn
 
     - name: Build
+      if: ${{ steps.version.outputs.new_tag != "" }}
       run: |
         dotnet build -c Release --no-restore
-        dotnet publish -c Release -o ./dotnet-app -r linux-x64 /p:PublishSingleFile=true /p:Version=${{ steps.version.outputs.revision }}
+        dotnet publish -c Release -o ./dotnet-app -r linux-x64 /p:PublishSingleFile=true /p:Version=${{ steps.version.outputs.new_version }}
     
     - name: Pack Build
+      if: ${{ steps.version.outputs.new_tag != "" }}
       run: |
         mv ./dotnet-app/ClientApp/dist ./dotnet-app/dist
         rm -rf ./dotnet-app/ClientApp
@@ -47,16 +53,19 @@ jobs:
     
     - name: Create Release
       id: create_release
+      if: ${{ steps.version.outputs.new_tag != "" }}
       uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ steps.version.outputs.revision }}
-        release_name: Release ${{ steps.version.outputs.revision }}
+        tag_name: ${{ steps.version.outputs.new_tag }}
+        release_name: Release ${{ steps.version.outputs.new_tag }}
+        body: ${{ steps.tag_version.outputs.changelog }}
         draft: false
         prerelease: false
 
     - name: Upload Build
+      if: ${{ steps.version.outputs.new_tag != "" }}
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
