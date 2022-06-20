@@ -23,7 +23,7 @@ jobs:
 
     - uses: actions/cache@v2
       id: yarn-cache
-      if: ${{ steps.version.outputs.new_tag != "" }}
+      if: ${{ steps.version.outputs.new_tag != '' }}
       with:
         path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
         key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
@@ -31,20 +31,20 @@ jobs:
           ${{ runner.os }}-yarn-
     
     - name: Install deps
-      if: ${{ steps.version.outputs.new_tag != "" }}
+      if: ${{ steps.version.outputs.new_tag != '' }}
       run: |
         dotnet restore
         cd ClientApp
         yarn
 
     - name: Build
-      if: ${{ steps.version.outputs.new_tag != "" }}
+      if: ${{ steps.version.outputs.new_tag != '' }}
       run: |
         dotnet build -c Release --no-restore
         dotnet publish -c Release -o ./dotnet-app -r linux-x64 /p:PublishSingleFile=true /p:Version=${{ steps.version.outputs.new_version }}
     
     - name: Pack Build
-      if: ${{ steps.version.outputs.new_tag != "" }}
+      if: ${{ steps.version.outputs.new_tag != '' }}
       run: |
         mv ./dotnet-app/ClientApp/dist ./dotnet-app/dist
         rm -rf ./dotnet-app/ClientApp
@@ -53,7 +53,7 @@ jobs:
     
     - name: Create Release
       id: create_release
-      if: ${{ steps.version.outputs.new_tag != "" }}
+      if: ${{ steps.version.outputs.new_tag != '' }}
       uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -65,7 +65,7 @@ jobs:
         prerelease: false
 
     - name: Upload Build
-      if: ${{ steps.version.outputs.new_tag != "" }}
+      if: ${{ steps.version.outputs.new_tag != '' }}
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
