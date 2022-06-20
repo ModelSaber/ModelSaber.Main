@@ -10,7 +10,9 @@ export function UnknownImage(props: { css: React.CSSProperties; date: Date; }) {
     return (
         <div style={{ ...internalCss, ...props.css }}>
             {isAprilFirst() ?
-                (<img src="unknown.gif" style={{ width: 230 }}></img>)
+                (<video className="card-img-top" style={{ width: 230 }} autoPlay loop muted playsInline>
+                    <source src="unknown.webm" type="video/webm"></source>
+                </video>)
                 :
                 (<svg width="200" height="200" viewBox="0 0 1000 1000" className="defaultImg" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" style={{ margin: `0 29.5px`, padding: 15, opacity: 0.6 }}>
                     <linearGradient id="SVGID_1_" gradientUnits="userSpaceOnUse" x1="132.3545" y1="714.4818" x2="883.6826" y2="276.1613">

@@ -23,7 +23,6 @@ export function GetTumbnail(props: { thumbnail: string; css: React.CSSProperties
     if (thumb.endsWith(".webm")) {
         return (<video className="card-img-top" style={props.css} autoPlay loop muted playsInline onError={onError}>
             <source src={props.thumbnail} type="video/webm"></source>
-            <source src="isfmoment.webm" type="video/webm"></source>
         </video>);
     }
     else {
