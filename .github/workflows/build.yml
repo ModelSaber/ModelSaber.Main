@@ -45,15 +45,15 @@ jobs:
       if: ${{ steps.version.outputs.new_tag != '' }}
       run: |
         dotnet build -c Release --no-restore
-        dotnet publish -c Release -o ./dotnet-app -r linux-x64 /p:PublishSingleFile=true /p:Version=${{ steps.version.outputs.new_version }}
+        dotnet publish -c Release -o ./publish -r linux-x64 /p:PublishSingleFile=true /p:Version=${{ steps.version.outputs.new_version }}
     
     - name: Pack Build
       if: ${{ steps.version.outputs.new_tag != '' }}
       run: |
-        mv ./dotnet-app/ClientApp/dist ./dotnet-app/dist
-        rm -rf ./dotnet-app/ClientApp
-        cd ./dotnet-app
-        tar -zcvf ../dotnet-main-app.tgz .
+        mv ./publish/ClientApp/dist ./publish/dist
+        rm -rf ./publish/ClientApp
+        cd ./publish
+        tar -zcvf ../main.tgz .
     
     - name: Create Release
       id: create_release
@@ -75,6 +75,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./dotnet-main-app.tgz
-        asset_name: dotnet-main-app.tgz
+        asset_path: ./main.tgz
+        asset_name: main.tgz
         asset_content_type: application/tar+gzip
