@@ -1,0 +1,67 @@
+name: "Build"
+
+on:
+  push:
+    branches: [ 'master' ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+
+    - name: Add github nuget repo
+      run: dotnet nuget add source --username ${{ secrets.RUNNER_USER }} --password ${{ secrets.RUNNER_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/ModelSaber/index.json"
+
+    - name: Version  
+      id: version  
+      uses: juliansangillo/tag-version@v1
+
+    - uses: actions/cache@v2
+      id: yarn-cache
+      with:
+        path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+        key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-yarn-
+    
+    - name: Install deps
+      run: |
+        dotnet restore
+        cd ClientApp
+        yarn
+
+    - name: Build
+      run: |
+        dotnet build -c Release --no-restore
+        dotnet publish -c Release -o ./dotnet-app -r linux-x64 /p:PublishSingleFile=true /p:Version=${{ steps.version.outputs.revision }}
+    
+    - name: Pack Build
+      run: |
+        mv ./dotnet-app/ClientApp/dist ./dotnet-app/dist
+        rm -rf ./dotnet-app/ClientApp
+        cd ./dotnet-app
+        tar -zcvf ../../dotnet-main-app.tgz .
+    
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.version.outputs.revision }}
+        release_name: Release ${{ steps.version.outputs.revision }}
+        draft: false
+        prerelease: false
+
+    - name: Upload Build
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./dotnet-main-app.tgz
+        asset_name: dotnet-main-app.tgz
+        asset_content_type: application/tar+gzip
