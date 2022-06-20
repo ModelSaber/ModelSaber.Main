@@ -195,7 +195,7 @@ namespace ModelSaber.Main.Services
                     .WithConstantRateFactor(12)
                     .WithFramerate(60)
                     .WithFastStart()
-                    .ForcePixelFormat("yuv420p")
+                    .ForcePixelFormat("yuva420p")
                     .WithVideoBitrate(500)
                     .DisableChannel(Channel.Audio)
                     .WithCustomArgument("-vf \"scale='min(512,iw)':-1\"")
