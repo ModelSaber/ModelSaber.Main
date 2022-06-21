@@ -59,12 +59,16 @@ namespace ModelSaber.Main.Services
         public FileService(IServiceProvider provider)
         {
             _provider = provider;
-            var toProcessList = JsonDocument.Parse(File.ReadAllText(_processList)).Deserialize<FileServiceProcessList>();
-            if (toProcessList != null)
+            if (File.Exists(_processList))
             {
-                _modelUploadQueue = toProcessList.ModelQueue;
-                _thumbnailUploadQueue = toProcessList.ThumbnailQueue;
+                var toProcessList = JsonDocument.Parse(File.ReadAllText(_processList)).Deserialize<FileServiceProcessList>();
+                if (toProcessList != null)
+                {
+                    _modelUploadQueue = toProcessList.ModelQueue;
+                    _thumbnailUploadQueue = toProcessList.ThumbnailQueue;
+                }
             }
+
             _timer = new Timer(UploadScheduler, null, 0, Constants.UploadSleepTime);
             _timer = new Timer(SaveQueue, null, 60000, 100);
         }
