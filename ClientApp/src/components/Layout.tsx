@@ -1,41 +1,40 @@
-import React, { Component } from "react";
+import React, { Component, PropsWithChildren, useEffect } from "react";
 import NavBar from "./NavBar";
 import "./Layout.scss";
+import { useGetApiVersionQuery } from "../graphqlTypes";
 
-export default class Layout extends Component<any, { build: { buildVersion: string, buildTime: string } }> {
-    constructor(props: any) {
-        super(props);
-        this.state = {
-            build: { buildTime: "", buildVersion: "" }
-        }
-    }
+export default function Layout(props: PropsWithChildren<{}>) {
+    const [{ mainVersion, mainBuildTime }, setMainVersionAndBuildTime] = React.useState({
+        mainVersion: "",
+        mainBuildTime: ""
+    });
+    const [{ data, fetching }] = useGetApiVersionQuery();
 
-    componentDidMount() {
+    useEffect(() => {
         fetch("api").then(async t => {
             if (!t.ok)
                 return;
             var build = await t.json();
-            this.setState({ build: { buildTime: new Date(Date.parse(build.buildTime)).toLocaleString(), buildVersion: build.buildVersion } });
+            setMainVersionAndBuildTime({ mainBuildTime: new Date(Date.parse(build.buildTime)).toLocaleString(), mainVersion: build.buildVersion });
         }).catch(console.error);
-    }
+    }, []);
 
-    render() {
-        return (<>
-            <NavBar />
+    return (<>
+        <NavBar />
+        <div className="container">
+            {props.children}
+        </div>
+        <div className="spacer" />
+        <footer className="footer bg-dark">
             <div className="container">
-                {this.props.children}
-            </div>
-            <div className="spacer" />
-            <footer className="footer bg-dark">
-                <div className="container">
-                    <div className="row">
-                        <label className="col-md-4">Build: {this.state.build.buildVersion}, Build Time: {this.state.build.buildTime}</label>
-                        <div className="col-md-8">
-                            <a className="btn btn-primary" href="https://discord.gg/PTnyY3shSQ" target="_blank"><i className="bi bi-discord"></i></a>
-                        </div>
+                <div className="row">
+                    <label className="col-md-4">Website Version: {mainVersion}, Build Time: {mainBuildTime}</label>
+                    {!fetching && (<label className="col-md-4">API Version: {data.version}, Build Time: {new Date(Date.parse(data.buildTime)).toLocaleString()}</label>)}
+                    <div className="col-md-4">
+                        <a className="btn btn-primary" href="https://discord.gg/PTnyY3shSQ" target="_blank"><i className="bi bi-discord"></i></a>
                     </div>
                 </div>
-            </footer>
-        </>);
-    }
+            </div>
+        </footer>
+    </>);
 }

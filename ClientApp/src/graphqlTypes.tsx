@@ -284,6 +284,11 @@ export type VoteType = {
   userId?: Maybe<Scalars['UInt']>;
 };
 
+export type GetApiVersionQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetApiVersionQuery = { __typename?: 'ModelSaberQuery', version?: string | null, buildTime?: any | null };
+
 export type GetModelFullQueryVariables = Exact<{
   modelId: Scalars['String'];
 }>;
@@ -352,6 +357,16 @@ export const ModelFragmentDoc = gql`
   thumbnail
 }
     `;
+export const GetApiVersionDocument = gql`
+    query GetApiVersion {
+  version
+  buildTime
+}
+    `;
+
+export function useGetApiVersionQuery(options?: Omit<Urql.UseQueryArgs<GetApiVersionQueryVariables>, 'query'>) {
+  return Urql.useQuery<GetApiVersionQuery>({ query: GetApiVersionDocument, ...options });
+};
 export const GetModelFullDocument = gql`
     query GetModelFull($modelId: String!) {
   model(id: $modelId) {
