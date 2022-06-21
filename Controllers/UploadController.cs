@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ModelSaber.Database;
+using ModelSaber.Main.Helpers;
 using ModelSaber.Main.Parser;
 using ModelSaber.Main.Services;
 using ModelSaber.Models;
@@ -12,7 +13,7 @@ using ModelSaber.Models;
 namespace ModelSaber.Main.Controllers
 {
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class UploadController : ControllerBase
     {
         private readonly ModelSaberDbContext _dbContext;
