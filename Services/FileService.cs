@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using FFMpegCore;
@@ -18,11 +20,30 @@ namespace ModelSaber.Main.Services
 {
     public class FileService
     {
-        private static readonly Dictionary<Guid, string> _thumbnailUploadQueue = new();
-        private static readonly Dictionary<Guid, string> _modelUploadQueue = new();
+        private static Dictionary<Guid, string> _thumbnailUploadQueue = new();
+        private static Dictionary<Guid, string> _modelUploadQueue = new();
+        private static readonly string _processList = Path.Combine(Directory.GetCurrentDirectory(), "fileServiceProcess.json");
         private readonly object _lock = new();
-        private readonly Summary _thumbnailsQueue = Metrics.CreateSummary("model_saber_thumbnails_queue_size", "Number of models in thumbnail upload queue");
-        private readonly Summary _modelsQueue = Metrics.CreateSummary("model_saber_models_queue_size", "Number of models in model upload queue");
+        private readonly Summary _thumbnailsQueue = Metrics.CreateSummary("model_saber_thumbnails_queue_size", "Number of models in thumbnail upload queue", new SummaryConfiguration
+        {
+            Objectives = new[]
+            {
+                new QuantileEpsilonPair(0.5, 0.05),
+                new QuantileEpsilonPair(0.9, 0.01),
+                new QuantileEpsilonPair(0.99, 0.005),
+                new QuantileEpsilonPair(0.999, 0.001)
+            }
+        });
+        private readonly Summary _modelsQueue = Metrics.CreateSummary("model_saber_models_queue_size", "Number of models in model upload queue", new SummaryConfiguration
+        {
+            Objectives = new[]
+            {
+                new QuantileEpsilonPair(0.5, 0.05),
+                new QuantileEpsilonPair(0.9, 0.01),
+                new QuantileEpsilonPair(0.99, 0.005),
+                new QuantileEpsilonPair(0.999, 0.001)
+            }
+        });
 
         private static readonly MagickGeometry _geometry = new()
         {
@@ -38,7 +59,22 @@ namespace ModelSaber.Main.Services
         public FileService(IServiceProvider provider)
         {
             _provider = provider;
+            var toProcessList = JsonDocument.Parse(File.ReadAllText(_processList)).Deserialize<FileServiceProcessList>();
+            if (toProcessList != null)
+            {
+                _modelUploadQueue = toProcessList.ModelQueue;
+                _thumbnailUploadQueue = toProcessList.ThumbnailQueue;
+            }
             _timer = new Timer(UploadScheduler, null, 0, Constants.UploadSleepTime);
+            _timer = new Timer(SaveQueue, null, 60000, 100);
+        }
+
+        private void SaveQueue(object? stateInfo)
+        {
+            lock (_lock)
+            {
+                File.WriteAllText(_processList, JsonSerializer.Serialize(new FileServiceProcessList(_modelUploadQueue, _thumbnailUploadQueue)));
+            }
         }
 
         private void UploadScheduler(object? stateInfo)
@@ -118,6 +154,7 @@ namespace ModelSaber.Main.Services
             lock (_lock)
             {
                 _modelUploadQueue.Add(modelId, tmp.FullName);
+                _modelsQueue.Observe(_modelUploadQueue.Count);
             }
         }
 
@@ -138,6 +175,7 @@ namespace ModelSaber.Main.Services
             lock (_lock)
             {
                 _thumbnailUploadQueue.Add(modelId, tmp.FullName);
+                _thumbnailsQueue.Observe(_thumbnailUploadQueue.Count);
             }
         }
 
@@ -206,6 +244,20 @@ namespace ModelSaber.Main.Services
             file.Delete();
 
             return outputStream;
+        }
+    }
+
+    internal class FileServiceProcessList
+    {
+        [JsonPropertyName("_t")]
+        public Dictionary<Guid, string> ThumbnailQueue;
+        [JsonPropertyName("_m")]
+        public Dictionary<Guid, string> ModelQueue;
+
+        public FileServiceProcessList(Dictionary<Guid, string> modelUploadQueue, Dictionary<Guid, string> thumbnailUploadQueue)
+        {
+            ModelQueue = modelUploadQueue;
+            ThumbnailQueue = thumbnailUploadQueue;
         }
     }
 }
