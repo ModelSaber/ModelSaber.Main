@@ -27,7 +27,6 @@ jobs:
 
     - uses: actions/cache@v2
       id: yarn-cache
-      if: ${{ steps.version.outputs.new_tag != '' }}
       with:
         path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
         key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
@@ -35,46 +34,30 @@ jobs:
           ${{ runner.os }}-yarn-
     
     - name: Install deps
-      if: ${{ steps.version.outputs.new_tag != '' }}
       run: |
         dotnet restore
         cd ClientApp
         yarn
 
     - name: Build
-      if: ${{ steps.version.outputs.new_tag != '' }}
       run: |
         dotnet build -c Release --no-restore
         dotnet publish -c Release -o ./publish -r linux-x64 /p:PublishSingleFile=true /p:Version=${{ steps.version.outputs.new_version }}
     
     - name: Pack Build
-      if: ${{ steps.version.outputs.new_tag != '' }}
       run: |
         mv ./publish/ClientApp/dist ./publish/dist
         rm -rf ./publish/ClientApp
         cd ./publish
         tar -zcvf ../main.tgz .
-    
-    - name: Create Release
-      id: create_release
-      if: ${{ steps.version.outputs.new_tag != '' }}
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Release
+      uses: softprops/action-gh-release@v1
       with:
+        token: ${{ secrets.GITHUB_TOKEN }}
         tag_name: ${{ steps.version.outputs.new_tag }}
         release_name: Release ${{ steps.version.outputs.new_tag }}
         body: ${{ steps.version.outputs.changelog }}
         draft: false
         prerelease: false
-
-    - name: Upload Build
-      if: ${{ steps.version.outputs.new_tag != '' }}
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./main.tgz
-        asset_name: main.tgz
-        asset_content_type: application/tar+gzip
+        files: main.tgz
