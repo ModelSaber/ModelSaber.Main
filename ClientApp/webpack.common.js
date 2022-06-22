@@ -96,6 +96,7 @@ module.exports = (params, dev) => {
                     { from: 'public/*.png', to: '[name][ext]' },
                     { from: 'public/*.svg', to: '[name][ext]' },
                     { from: 'public/*.webm', to: '[name][ext]' },
+                    { from: 'public/manifest.json', to: 'manifest.json' }
                 ]
             })
         ]
