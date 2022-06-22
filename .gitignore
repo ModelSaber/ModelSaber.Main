@@ -384,3 +384,4 @@ MigrationBackup/
 /ClientApp/public/models
 /ClientApp/build
 /temp
+fileServiceProcess.json
