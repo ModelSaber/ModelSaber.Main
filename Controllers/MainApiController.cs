@@ -12,7 +12,7 @@ namespace ModelSaber.Main.Controllers
         public IActionResult Index()
         {
             return Ok(new {
-                BuildVersion = Program.Version.ToString(),
+                BuildVersion = Program.Version.ToString(3),
                 BuildTime = $"{Program.CompiledTime.ToUniversalTime():s}Z"
             });
         }
