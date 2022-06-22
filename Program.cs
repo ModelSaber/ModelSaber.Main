@@ -48,7 +48,7 @@ namespace ModelSaber.Main
                     #endif
                     webBuilder.UseStartup<Startup>();
                 });
-        //Create temp directory
+
         public static void CreateTempDirectory()
         {
             var tempDir = Path.Combine(Directory.GetCurrentDirectory(), Constants.TempDirectory);
