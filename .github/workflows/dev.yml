@@ -14,4 +14,4 @@ jobs:
     steps:
     - name: Test json string
       run: |
-        echo '{"project": "${{ GITHUB_REPOSITORY }}","tag": "${{ env.new_tag }}"}'
+        echo '{"project": "${{ env.GITHUB_REPOSITORY }}","tag": "${{ env.new_tag }}"}'
