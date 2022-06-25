@@ -1,0 +1,17 @@
+name: Test
+
+on:
+  push:
+    branches: ["dev"]
+
+env:
+  new_tag: v1.0.0
+
+jobs:
+  dev:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Test json string
+      run: |
+        echo '{"project": "$GITHUB_REPOSITORY","tag": "${{ env.new_tag }}"}'
