@@ -14,5 +14,4 @@ jobs:
     steps:
     - name: Test json string
       run: |
-        echo ::set-env name=repo::${GITHUB_REPOSITORY#*/}
-        echo '{"project": "${{ env.repo }}","tag": "${{ env.new_tag }}"}'
+        echo '{"project": "${{ github.event.repository.name }}","tag": "${{ env.new_tag }}"}'
