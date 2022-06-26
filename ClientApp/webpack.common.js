@@ -3,6 +3,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const dotenv = require('dotenv');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const WorkboxPlugin = require('workbox-webpack-plugin');
 
 module.exports = (params, dev) => {
     const env = dotenv.config({ path: './.env' }).parsed;
@@ -88,7 +89,7 @@ module.exports = (params, dev) => {
             new webpack.DefinePlugin(envKeys),
             new MiniCssExtractPlugin(
                 {
-                    filename: 'styles.[chunkhash].css',
+                    filename: '[name].[chunkhash].css',
                 }
             ),
             new CopyWebpackPlugin({
@@ -98,7 +99,12 @@ module.exports = (params, dev) => {
                     { from: 'public/*.webm', to: '[name][ext]' },
                     { from: 'public/manifest.json', to: 'manifest.json' }
                 ]
+            }),
+            new WorkboxPlugin.GenerateSW({
+                clientsClaim: true,
+                skipWaiting: true,
+                maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
             })
-        ]
+        ],
     }
 };
