@@ -59,9 +59,8 @@ namespace ModelSaber.Main.Services
         public FileService(IServiceProvider provider)
         {
             _provider = provider;
-            if (File.Exists(_processList))
+            try
             {
-
                 using var stream = File.OpenText(_processList);
                 try
                 {
@@ -79,6 +78,10 @@ namespace ModelSaber.Main.Services
                 }
 
                 stream.Dispose();
+            }
+            catch
+            {
+                // ignored
             }
 
             _timer = new Timer(UploadScheduler, null, 0, Constants.UploadSleepTime);
