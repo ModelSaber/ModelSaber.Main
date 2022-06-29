@@ -86,8 +86,10 @@ export type ModelSaberQueryModelArgs = {
 export type ModelSaberQueryModelCursorsArgs = {
   nsfw?: InputMaybe<Scalars['Boolean']>;
   order?: InputMaybe<Scalars['String']>;
+  platform?: InputMaybe<Platform>;
   size?: InputMaybe<Scalars['Int']>;
   status?: InputMaybe<Array<InputMaybe<Status>>>;
+  type?: InputMaybe<TypeEnum>;
 };
 
 
@@ -304,6 +306,8 @@ export type GetModelFullQuery = { __typename?: 'ModelSaberQuery', model?: { __ty
 export type GetModelCursorsQueryVariables = Exact<{
   size?: InputMaybe<Scalars['Int']>;
   nsfw?: InputMaybe<Scalars['Boolean']>;
+  type?: InputMaybe<TypeEnum>;
+  platform?: InputMaybe<Platform>;
 }>;
 
 
@@ -405,8 +409,8 @@ export function useGetModelFullQuery(options: Omit<Urql.UseQueryArgs<GetModelFul
   return Urql.useQuery<GetModelFullQuery>({ query: GetModelFullDocument, ...options });
 };
 export const GetModelCursorsDocument = gql`
-    query GetModelCursors($size: Int, $nsfw: Boolean) {
-  modelCursors(size: $size, nsfw: $nsfw)
+    query GetModelCursors($size: Int, $nsfw: Boolean, $type: TypeEnum, $platform: Platform) {
+  modelCursors(size: $size, nsfw: $nsfw, type: $type, platform: $platform)
 }
     `;
 

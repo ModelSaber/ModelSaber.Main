@@ -8,21 +8,11 @@ import ModelFilter from "../components/model/ModelFilter";
 export default function Models() {
     const [size, setSize] = useState(10);
     const [nsfw, setNsfw] = useState(false);
-    const [{ data, fetching }] = useGetModelCursorsQuery({ variables: { size: size, nsfw: nsfw } });
-
-    if (fetching) return <Loader />;
-
-    return <ModelsWithCursors cursors={["", ...data.modelCursors]} size={size} nsfw={nsfw} setNsfw={setNsfw} setSize={setSize} />
-}
-
-function ModelsWithCursors({ cursors, size, nsfw, setNsfw, setSize }: { cursors: string[], size: number, nsfw: boolean, setNsfw: (nsfw: boolean) => void, setSize: (size: number) => void }) {
-    const [filter, setFilter] = useState("");
-    const [page, setPage] = useState(0);
     const [platform, setPlatform] = useState(Platform.Pc);
     const [type, setType] = useState<TypeEnum>(undefined);
-    const [{ data, fetching }] = useGetModelsQuery({ variables: { first: size, after: cursors[page], modelType: type, platform: platform, nsfw: nsfw } });
-    const location = useLocation();
-    const history = useNavigate();
+    const [filter, setFilter] = useState("");
+    const [page, setPage] = useState(0);
+    const [{ data, fetching }] = useGetModelCursorsQuery({ variables: { size: size, nsfw: nsfw, platform: platform, type: type } });
 
     useEffect(() => {
         var hash = location.hash.substring(1);
@@ -55,13 +45,49 @@ function ModelsWithCursors({ cursors, size, nsfw, setNsfw, setSize }: { cursors:
         }
     }, [true]);
 
+    if (fetching) return <Loader />;
+
+    const { modelCursors: cursors } = data;
+
+    return <ModelsWithCursors
+        cursors={["", ...cursors]}
+        size={size}
+        nsfw={nsfw}
+        platform={platform}
+        type={type}
+        filter={filter}
+        page={page}
+        setNsfw={setNsfw}
+        setSize={setSize}
+        setPlatform={setPlatform}
+        setType={setType}
+        setFilter={setFilter}
+        setPage={setPage} />;
+}
+
+function ModelsWithCursors({ cursors, size, nsfw, platform, type, filter, page, setNsfw, setSize, setPlatform, setType, setFilter, setPage }: {
+    cursors: string[],
+    size: number,
+    nsfw: boolean,
+    platform: Platform,
+    type: TypeEnum,
+    filter: string,
+    page: number,
+    setNsfw: (nsfw: boolean) => void,
+    setSize: (size: number) => void,
+    setPlatform: (platform: Platform) => void,
+    setType: (type: TypeEnum) => void,
+    setFilter: (filter: string) => void,
+    setPage: (page: number) => void
+}) {
+    const [{ data, fetching }] = useGetModelsQuery({ variables: { first: size, after: cursors[page], modelType: type, platform: platform, nsfw: nsfw } });
+    const location = useLocation();
+    const history = useNavigate();
+
     useEffect(() => {
         var hash = "#s=" + size;
         if (page) {
             hash += "&p=" + page;
-        }
-        if (filter) {
-            hash += "&f=" + filter;
         }
         if (nsfw) {
             hash += "&n";
@@ -74,6 +100,9 @@ function ModelsWithCursors({ cursors, size, nsfw, setNsfw, setSize }: { cursors:
         }
         if (type) {
             hash += "&t=" + type;
+        }
+        if (filter) {
+            hash += "&f=" + filter;
         }
         history(hash);
     }, [size, page, filter, nsfw, platform, type]);
@@ -89,15 +118,15 @@ function ModelsWithCursors({ cursors, size, nsfw, setNsfw, setSize }: { cursors:
             size={size}
             platform={platform}
             type={type}
-            cursors={cursors}
-            pageMove={page => { setPage(page); }}
+            length={cursors.length}
+            pageMove={setPage}
             setSize={setSize}
             setFilter={setFilter}
             setNsfw={setNsfw}
             setPlatform={setPlatform}
             setType={setType} />
         <div className="d-flex flex-wrap justify-content-between" style={{ margin: "0 -30px" }}>
-            {data.models.items.map(model => (<ModelCard key={model.id} {...model} navigate={history} />))}
+            {data && data.models.items.map(model => (<ModelCard key={model.id} {...model} navigate={history} />))}
         </div>
         <ModelFilter
             index={1}
@@ -107,8 +136,8 @@ function ModelsWithCursors({ cursors, size, nsfw, setNsfw, setSize }: { cursors:
             size={size}
             platform={platform}
             type={type}
-            cursors={cursors}
-            pageMove={page => { setPage(page); }}
+            length={cursors.length}
+            pageMove={setPage}
             setSize={setSize}
             setFilter={setFilter}
             setNsfw={setNsfw}
