@@ -84,8 +84,10 @@ export type ModelSaberQueryModelArgs = {
 
 
 export type ModelSaberQueryModelCursorsArgs = {
+  nsfw?: InputMaybe<Scalars['Boolean']>;
   order?: InputMaybe<Scalars['String']>;
   size?: InputMaybe<Scalars['Int']>;
+  status?: InputMaybe<Array<InputMaybe<Status>>>;
 };
 
 
@@ -105,8 +107,10 @@ export type ModelSaberQueryModelsArgs = {
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
   modelType?: InputMaybe<TypeEnum>;
-  nameFilter: Scalars['String'];
+  nameFilter?: InputMaybe<Scalars['String']>;
   nsfw?: InputMaybe<Scalars['Boolean']>;
+  platform?: InputMaybe<Platform>;
+  status?: InputMaybe<Array<InputMaybe<Status>>>;
 };
 
 
@@ -126,18 +130,19 @@ export type ModelType = {
   downloadPath: Scalars['String'];
   hash?: Maybe<Scalars['String']>;
   /** The id of the model */
-  id?: Maybe<Scalars['Guid']>;
+  id: Scalars['Guid'];
   mainUser?: Maybe<UserType>;
   name: Scalars['String'];
+  nsfw: Scalars['Boolean'];
   /** The platform the model is for */
-  platform?: Maybe<Platform>;
+  platform: Platform;
   /** The status of the model */
   status?: Maybe<Array<Maybe<Status>>>;
   tags?: Maybe<Array<Maybe<TagType>>>;
   thumbnail: Scalars['String'];
   /** What model type it is */
-  type?: Maybe<TypeEnum>;
-  userId?: Maybe<Scalars['UInt64']>;
+  type: TypeEnum;
+  userId: Scalars['UInt64'];
   users?: Maybe<Array<Maybe<UserType>>>;
 };
 
@@ -294,10 +299,11 @@ export type GetModelFullQueryVariables = Exact<{
 }>;
 
 
-export type GetModelFullQuery = { __typename?: 'ModelSaberQuery', model?: { __typename?: 'ModelType', id?: any | null, name: string, status?: Array<Status | null> | null, platform?: Platform | null, type?: TypeEnum | null, description?: string | null, thumbnail: string, downloadPath: string, users?: Array<{ __typename?: 'UserType', name?: string | null, discordId?: any | null, id: any } | null> | null, tags?: Array<{ __typename?: 'TagType', name: string, id: any } | null> | null } | null };
+export type GetModelFullQuery = { __typename?: 'ModelSaberQuery', model?: { __typename?: 'ModelType', id: any, name: string, status?: Array<Status | null> | null, platform: Platform, type: TypeEnum, description?: string | null, thumbnail: string, downloadPath: string, nsfw: boolean, users?: Array<{ __typename?: 'UserType', name?: string | null, discordId?: any | null, id: any } | null> | null, tags?: Array<{ __typename?: 'TagType', name: string, id: any } | null> | null } | null };
 
 export type GetModelCursorsQueryVariables = Exact<{
   size?: InputMaybe<Scalars['Int']>;
+  nsfw?: InputMaybe<Scalars['Boolean']>;
 }>;
 
 
@@ -306,14 +312,16 @@ export type GetModelCursorsQuery = { __typename?: 'ModelSaberQuery', modelCursor
 export type GetModelsQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
   after?: InputMaybe<Scalars['String']>;
-  nameFilter: Scalars['String'];
+  nameFilter?: InputMaybe<Scalars['String']>;
   modelType?: InputMaybe<TypeEnum>;
+  nsfw?: InputMaybe<Scalars['Boolean']>;
+  platform?: InputMaybe<Platform>;
 }>;
 
 
-export type GetModelsQuery = { __typename?: 'ModelSaberQuery', models?: { __typename?: 'ModelConnection', items?: Array<{ __typename?: 'ModelType', id?: any | null, name: string, status?: Array<Status | null> | null, platform?: Platform | null, cursor: string, thumbnail: string, users?: Array<{ __typename?: 'UserType', name?: string | null, discordId?: any | null, id: any } | null> | null, tags?: Array<{ __typename?: 'TagType', name: string, id: any } | null> | null } | null> | null, pageInfo: { __typename?: 'PageInfo', endCursor?: string | null, hasNextPage: boolean, hasPreviousPage: boolean } } | null };
+export type GetModelsQuery = { __typename?: 'ModelSaberQuery', models?: { __typename?: 'ModelConnection', items?: Array<{ __typename?: 'ModelType', id: any, name: string, status?: Array<Status | null> | null, platform: Platform, cursor: string, thumbnail: string, nsfw: boolean, users?: Array<{ __typename?: 'UserType', name?: string | null, discordId?: any | null, id: any } | null> | null, tags?: Array<{ __typename?: 'TagType', name: string, id: any } | null> | null } | null> | null, pageInfo: { __typename?: 'PageInfo', endCursor?: string | null, hasNextPage: boolean, hasPreviousPage: boolean } } | null };
 
-export type ModelFragment = { __typename?: 'ModelType', id?: any | null, name: string, status?: Array<Status | null> | null, platform?: Platform | null, cursor: string, thumbnail: string, users?: Array<{ __typename?: 'UserType', name?: string | null, discordId?: any | null, id: any } | null> | null, tags?: Array<{ __typename?: 'TagType', name: string, id: any } | null> | null };
+export type ModelFragment = { __typename?: 'ModelType', id: any, name: string, status?: Array<Status | null> | null, platform: Platform, cursor: string, thumbnail: string, nsfw: boolean, users?: Array<{ __typename?: 'UserType', name?: string | null, discordId?: any | null, id: any } | null> | null, tags?: Array<{ __typename?: 'TagType', name: string, id: any } | null> | null };
 
 export type GetModelVotesQueryVariables = Exact<{
   modelId: Scalars['String'];
@@ -355,6 +363,7 @@ export const ModelFragmentDoc = gql`
     id
   }
   thumbnail
+  nsfw
 }
     `;
 export const GetApiVersionDocument = gql`
@@ -387,6 +396,7 @@ export const GetModelFullDocument = gql`
     }
     thumbnail
     downloadPath
+    nsfw
   }
 }
     `;
@@ -395,8 +405,8 @@ export function useGetModelFullQuery(options: Omit<Urql.UseQueryArgs<GetModelFul
   return Urql.useQuery<GetModelFullQuery>({ query: GetModelFullDocument, ...options });
 };
 export const GetModelCursorsDocument = gql`
-    query GetModelCursors($size: Int) {
-  modelCursors(size: $size)
+    query GetModelCursors($size: Int, $nsfw: Boolean) {
+  modelCursors(size: $size, nsfw: $nsfw)
 }
     `;
 
@@ -404,12 +414,14 @@ export function useGetModelCursorsQuery(options?: Omit<Urql.UseQueryArgs<GetMode
   return Urql.useQuery<GetModelCursorsQuery>({ query: GetModelCursorsDocument, ...options });
 };
 export const GetModelsDocument = gql`
-    query GetModels($first: Int, $after: String, $nameFilter: String!, $modelType: TypeEnum) {
+    query GetModels($first: Int, $after: String, $nameFilter: String, $modelType: TypeEnum, $nsfw: Boolean, $platform: Platform) {
   models(
     first: $first
     after: $after
     nameFilter: $nameFilter
     modelType: $modelType
+    nsfw: $nsfw
+    platform: $platform
   ) {
     items {
       ...Model
@@ -423,7 +435,7 @@ export const GetModelsDocument = gql`
 }
     ${ModelFragmentDoc}`;
 
-export function useGetModelsQuery(options: Omit<Urql.UseQueryArgs<GetModelsQueryVariables>, 'query'>) {
+export function useGetModelsQuery(options?: Omit<Urql.UseQueryArgs<GetModelsQueryVariables>, 'query'>) {
   return Urql.useQuery<GetModelsQuery>({ query: GetModelsDocument, ...options });
 };
 export const GetModelVotesDocument = gql`

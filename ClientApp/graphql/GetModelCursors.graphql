@@ -1,3 +1,3 @@
-query GetModelCursors($size: Int){
-    modelCursors(size: $size)
+query GetModelCursors($size: Int, $nsfw: Boolean){
+    modelCursors(size: $size, nsfw: $nsfw)
 }
