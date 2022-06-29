@@ -23,6 +23,13 @@ namespace ModelSaber.Main.Services
         private static Dictionary<Guid, string> _thumbnailUploadQueue = new();
         private static Dictionary<Guid, string> _modelUploadQueue = new();
         private static readonly string _processList = Path.Combine(Directory.GetCurrentDirectory(), "fileServiceProcess.json");
+        private static readonly MagickGeometry _geometry = new()
+        {
+            Greater = true,
+            Height = 512,
+            Width = 512,
+            Less = false
+        };
         private readonly object _lock = new();
         private readonly Summary _thumbnailsQueue = Metrics.CreateSummary("model_saber_thumbnails_queue_size", "Number of models in thumbnail upload queue", new SummaryConfiguration
         {
@@ -45,13 +52,6 @@ namespace ModelSaber.Main.Services
             }
         });
 
-        private static readonly MagickGeometry _geometry = new()
-        {
-            Greater = true,
-            Height = 512,
-            Width = 512,
-            Less = false
-        };
 
         private readonly IServiceProvider _provider;
         private readonly Timer _timer;
@@ -76,7 +76,6 @@ namespace ModelSaber.Main.Services
                 {
                     // ignored
                 }
-
                 stream.Dispose();
             }
             catch
@@ -92,7 +91,35 @@ namespace ModelSaber.Main.Services
         {
             lock (_lock)
             {
-                File.WriteAllText(_processList, JsonSerializer.Serialize(new FileServiceProcessList(_modelUploadQueue, _thumbnailUploadQueue)));
+                try
+                {
+                    var stream = File.OpenWrite(_processList);
+                    var writer = new Utf8JsonWriter(stream);
+                    writer.WriteStartObject();
+                    writer.WriteStartObject("modelQueue");
+                    foreach (var (key, value) in _modelUploadQueue)
+                    {
+                        writer.WritePropertyName(key.ToString());
+                        writer.WriteStringValue(value);
+                    }
+
+                    writer.WriteEndObject();
+                    writer.WriteStartObject("thumbnailQueue");
+                    foreach (var (key, value) in _thumbnailUploadQueue)
+                    {
+                        writer.WritePropertyName(key.ToString());
+                        writer.WriteStringValue(value);
+                    }
+
+                    writer.WriteEndObject();
+                    writer.WriteEndObject();
+                    writer.Flush();
+                    stream.Dispose();
+                }
+                catch
+                {
+                    //ignore
+                }
             }
         }
 
@@ -119,7 +146,6 @@ namespace ModelSaber.Main.Services
                         //TODO add logic for storage bucket
                         using var stream = File.OpenRead(file);
                     }
-#pragma warning restore CS0162
                     else
                     {
                         var thumbnail = dbContext.Models.First(t => t.Uuid == id).Thumbnail;
@@ -129,6 +155,7 @@ namespace ModelSaber.Main.Services
                         File.Move(file, path);
                         thumbnailUploadQueueProcessed.Add(id);
                     }
+#pragma warning restore CS0162
                 }
 
                 foreach (var (id, file) in modelUploadQueue)
@@ -139,7 +166,6 @@ namespace ModelSaber.Main.Services
                         //TODO add logic for storage bucket
                         using var stream = File.OpenRead(file);
                     }
-#pragma warning restore CS0162
                     else
                     {
                         var model = dbContext.Models.First(t => t.Uuid == id);
@@ -149,6 +175,7 @@ namespace ModelSaber.Main.Services
                         File.Move(file, path);
                         modelUploadQueueProcessed.Add(id);
                     }
+#pragma warning restore CS0162
                 }
 
                 lock (_lock)
