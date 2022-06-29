@@ -8,7 +8,7 @@ export default function Home() {
             <h1 className="align-middle">
                 Welcome to ModelSaber <label style={{ display: "inline", fontSize: 1, textDecorationLine: "line-through", opacity: 0.1 }}><i>(Destroyer of old links)</i></label>
             </h1>
-            <a onClick={() => navigate("/models")} className="btn btn-primary">Models</a>
+            <a href="/models" className="btn btn-primary">Models</a>
         </div>
     );
 };
