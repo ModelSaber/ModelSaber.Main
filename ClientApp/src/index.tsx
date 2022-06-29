@@ -2,11 +2,11 @@ import React, { Component, lazy, Suspense } from "react";
 import "./index.scss";
 import "bootstrap-icons/font/bootstrap-icons.scss";
 import { BrowserRouter } from "react-router-dom";
-import App from "./App";
 import registerServiceWorker from "./serviceWorker";
 import { Loader } from "./components/Loader";
-import { Auth } from "./components/Auth";
+const Auth = lazy(() => import("./components/Auth"));
 const GQLClient = lazy(() => import("./components/GQLClient"));
+const App = lazy(() => import("./App"));
 
 const baseUrl = document.getElementsByTagName("base")[0].getAttribute("href");
 const rootElement = document.getElementById("root");
