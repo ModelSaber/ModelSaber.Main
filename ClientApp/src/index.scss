@@ -32,6 +32,20 @@ $utilities: map-merge(
     )
 );
 
+.page-item-dropdown {
+    text-align: center;
+}
+
+.card-img-blur {
+    &:hover {
+        filter: none;
+        -webkit-filter: none;
+    }
+    filter: blur(50px);
+    -webkit-filter: blur(50px);
+    transition: 0.2s linear filter, 0.2s linear -webkit-filter;
+}
+
 .outline {
     border: 1px solid transparent;
 }

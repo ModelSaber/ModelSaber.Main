@@ -42,8 +42,8 @@ export class ModelCard extends Component<ModelFragment & { navigate: (path: stri
     render() {
         return (<div className="card bg-dark mb-3" style={{ width: 259 }}>
             <div className="card-header" style={{ position: "relative" }}>
-                <div style={{ width: 259, height: 259 }}>
-                    <GetTumbnail {...this.props} css={{ width: 257, height: 257, margin: "-0.5rem -1rem" }} />
+                <div style={{ width: 259, height: 259, overflow: "hidden", margin: "-0.5rem -1rem" }}>
+                    <GetTumbnail {...this.props} css={{ width: 257, height: 257 }} />
                 </div>
                 <h4 className="mt-3">
                     {this.props.name}
