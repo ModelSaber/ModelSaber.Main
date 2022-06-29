@@ -1,5 +1,4 @@
-import React, { createContext, createElement, PropsWithChildren, useContext, useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import React, { createContext, createElement, PropsWithChildren, useContext, useState } from "react";
 import { checkCookie, getParamFromLogin } from "..";
 
 const LoginContext = createContext({
@@ -16,7 +15,7 @@ export function useLogin() {
     return useContext(LoginContext);
 }
 
-export function Auth(params: PropsWithChildren<{}>) {
+export default function Auth(params: PropsWithChildren<{}>) {
     const loggedIn = checkCookie("login");
     const user = loggedIn ? {
         uuid: getParamFromLogin("uuid"),

@@ -1,5 +1,5 @@
-query GetModels($first: Int, $after: String, $nameFilter: String!, $modelType: TypeEnum) {
-    models(first: $first, after: $after, nameFilter: $nameFilter, modelType: $modelType) {
+query GetModels($first: Int, $after: String, $nameFilter: String, $modelType: TypeEnum, $nsfw: Boolean, $platform: Platform) {
+    models(first: $first, after: $after, nameFilter: $nameFilter, modelType: $modelType, nsfw: $nsfw, platform: $platform) {
         items {
             ...Model
         }
@@ -27,4 +27,5 @@ fragment Model on ModelType {
         id
     }
     thumbnail
+    nsfw
 }

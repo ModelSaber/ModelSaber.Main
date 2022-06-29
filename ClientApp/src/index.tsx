@@ -1,13 +1,12 @@
 import React, { Component, lazy, Suspense } from "react";
 import "./index.scss";
 import "bootstrap-icons/font/bootstrap-icons.scss";
-import ReactDOM from "react-dom";
 import { BrowserRouter } from "react-router-dom";
-import App from "./App";
-import registerServiceWorker from "./registerServiceWorker";
+import registerServiceWorker from "./serviceWorker";
 import { Loader } from "./components/Loader";
-import { Auth } from "./components/Auth";
+const Auth = lazy(() => import("./components/Auth"));
 const GQLClient = lazy(() => import("./components/GQLClient"));
+const App = lazy(() => import("./App"));
 
 const baseUrl = document.getElementsByTagName("base")[0].getAttribute("href");
 const rootElement = document.getElementById("root");
@@ -43,7 +42,10 @@ class Index extends Component {
     }
 }
 
-ReactDOM.render(<Index />, rootElement);
+import('react-dom').then(ReactDOM => {
+    ReactDOM.render(<Index />, rootElement);
+});
+
 
 registerServiceWorker();
 

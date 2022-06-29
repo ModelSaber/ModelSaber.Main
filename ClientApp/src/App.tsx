@@ -1,9 +1,9 @@
-import React, { Component, lazy, useEffect } from "react";
+import React, { lazy, useEffect } from "react";
 import { Route, Routes } from "react-router";
 import { Tooltip } from "bootstrap/dist/js/bootstrap.bundle.min";
 import Layout from "./components/Layout";
 import XRegExp from "xregexp";
-import ModelUpload from "./pages/ModelUpload";
+const Upload = lazy(() => import("./pages/Upload"));
 const Developer = lazy(() => import("./pages/Developers"));
 const Contributions = lazy(() => import("./pages/Contributions"));
 const Home = lazy(() => import("./pages/Home"));
@@ -15,8 +15,6 @@ const Logout = lazy(() => import("./pages/Logout"));
 export const unicodeWord = XRegExp.tag()`^\p{Letter}[\p{Letter}\p{Mark}]*$`;
 
 export default function App() {
-
-
     useEffect(() => {
         setTimeout(() => {
             document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(function (tooltipTriggerEl) {
@@ -35,7 +33,7 @@ export default function App() {
                 <Route path="/discordlogin" element={<Login />} />
                 <Route path="/logout" element={<Logout />} />
                 <Route path="/model/:id" element={<Model />} />
-                <Route path="/upload" element={<ModelUpload />} />
+                <Route path="/upload" element={<Upload />} />
             </Routes>
         </Layout>
     );

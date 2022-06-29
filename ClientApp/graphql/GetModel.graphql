@@ -17,5 +17,6 @@ query GetModelFull($modelId: String!) {
         }
         thumbnail
         downloadPath
+        nsfw
     }
 }

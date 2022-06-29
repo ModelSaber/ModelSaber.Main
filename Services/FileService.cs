@@ -61,9 +61,10 @@ namespace ModelSaber.Main.Services
             _provider = provider;
             try
             {
-                if (File.Exists(_processList))
+                using var stream = File.OpenText(_processList);
+                try
                 {
-                    var document = JsonDocument.Parse(File.ReadAllText(_processList));
+                    var document = JsonDocument.Parse(stream.ReadToEnd());
                     var toProcessList = document.Deserialize<FileServiceProcessList>();
                     if (toProcessList != null)
                     {
@@ -71,6 +72,12 @@ namespace ModelSaber.Main.Services
                         _thumbnailUploadQueue = toProcessList.ThumbnailQueue;
                     }
                 }
+                catch
+                {
+                    // ignored
+                }
+
+                stream.Dispose();
             }
             catch
             {
