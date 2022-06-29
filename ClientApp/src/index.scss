@@ -4,6 +4,7 @@
 // Override any bootstrap variable here
 $white: #444444;
 $body-color: $gray-200;
+$primary: #33a3ff;
 $success: #23d160;
 $border-radius: 0.5rem;
 $border-radius-sm: 0.25rem;
@@ -16,6 +17,9 @@ $pagination-disabled-bg: $gray-800;
 $pagination-color: $gray-200;
 $pagination-focus-color: $gray-200;
 $pagination-hover-color: $gray-200;
+$pagination-active-bg: $primary;
+$pagination-active-border-color: $primary;
+$pagination-active-color: $black;
 
 @import "./bootstrapEnd.scss"; //just ignore everything in this file
 

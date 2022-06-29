@@ -1,8 +1,6 @@
 import React, { lazy, useEffect } from "react";
 import { Route, Routes } from "react-router";
-import { Tooltip } from "bootstrap/dist/js/bootstrap.bundle.min";
-import Layout from "./components/Layout";
-import XRegExp from "xregexp";
+const Layout = lazy(() => import("./components/Layout"));
 const Upload = lazy(() => import("./pages/Upload"));
 const Developer = lazy(() => import("./pages/Developers"));
 const Contributions = lazy(() => import("./pages/Contributions"));
@@ -12,14 +10,20 @@ const Models = lazy(() => import("./pages/Models"));
 const Login = lazy(() => import("./pages/Login"));
 const Logout = lazy(() => import("./pages/Logout"));
 
-export const unicodeWord = XRegExp.tag()`^\p{Letter}[\p{Letter}\p{Mark}]*$`;
+export let unicodeWord: RegExp;
+
+import("xregexp").then((xregexp) => {
+    unicodeWord = xregexp.default.tag()`^\p{Letter}[\p{Letter}\p{Mark}]*$`;
+});
 
 export default function App() {
     useEffect(() => {
         setTimeout(() => {
-            document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(function (tooltipTriggerEl) {
-                new Tooltip(tooltipTriggerEl);
-            });
+            import("bootstrap/dist/js/bootstrap.bundle.min").then(({ Tooltip }) => {
+                document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(function (tooltipTriggerEl) {
+                    new Tooltip(tooltipTriggerEl);
+                });
+            })
         }, 500);
     });
 

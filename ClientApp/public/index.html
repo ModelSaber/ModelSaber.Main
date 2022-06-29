@@ -4,6 +4,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="ModelSaber is a repository for people to share their created models." />
+  <meta name="theme-color" content="#BE10FF" />
   <base href="/" />
   <!--
       manifest.json provides metadata used when your web app is added to the
@@ -16,7 +18,9 @@
   <link rel="shortcut icon" href="/icon-128.png" type="image/png" sizes="128x128">
   <link rel="shortcut icon" href="/icon-64.png" type="image/png" sizes="64x64">
   <link rel="shortcut icon" href="/icon-32.png" type="image/png" sizes="32x32">
+  <link rel="apple-touch-icon" href="/icon-192.png">
   <link rel="prefetch" as="video/webm" href="isfmoment.webm">
+  <link rel="prefetch" as="video/webm" href="unknown.webm">
 
   <title>
     <%= process.env.REACT_APP_NAME %>
@@ -24,12 +28,13 @@
   <style>
     :root {
       --bs-body-bg: #444444 !important;
-      --bs-body-color: #e9ecef !important;
+      --bs-body-color: #eeeeee !important;
       --scrollbar-width: 14px;
       --scrollbar-rounder: 1.25;
     }
 
-    html {
+    html,
+    body {
       background: var(--bs-body-bg);
       background-attachment: fixed;
       background-size: 23040px 1440px;

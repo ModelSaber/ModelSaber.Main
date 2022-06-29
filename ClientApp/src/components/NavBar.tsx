@@ -11,18 +11,17 @@ export default function NavBar() {
     return (
         <header className="navbar sticky-top bg-dark">
             <div className="container-fluid">
-                <a className="btn btn-dark" onClick={() => navigate("/")}>
+                <a className="btn btn-dark" href="/">
                     <img src="modelsaber-logo.svg" alt="ModelSaberImage" className="img-fluid" width="52" height="52" />
                 </a>
                 <div>
-                    <a className="btn btn-primary me-3" onClick={() => navigate("/upload")}>
+                    <a className="btn btn-primary me-3" href="/upload">
                         Upload
                     </a>
                 </div>
                 <div>
-                    <a className="btn btn-outline-primary me-3" href="https://github.com/ModelSaber/ModelSaber/" target="_blank"><i className="bi bi-github"></i></a>
-                    <a className="btn btn-outline-primary me-3" onClick={() => navigate("/contributions")}>Contributions</a>
-                    <a className="btn btn-outline-primary me-3" onClick={() => navigate("/dev")}>Developers</a>
+                    <a className="btn btn-outline-primary me-3" href="/contributions">Contributions</a>
+                    <a className="btn btn-outline-primary me-3" href="/dev">Developers</a>
                     <a className="btn btn-outline-primary me-3" href="https://github.com/legoandmars/modeldownloader" target="_blank">ModelDownloader</a>
                     <a className="btn btn-primary" href={login ? undefined : discordLink} onClick={() => { if (login) navigate("/logout"); }}>
                         {login ? "Logout" : "Login"}

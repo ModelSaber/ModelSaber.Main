@@ -11,7 +11,7 @@ const App = lazy(() => import("./App"));
 const baseUrl = document.getElementsByTagName("base")[0].getAttribute("href");
 const rootElement = document.getElementById("root");
 const loaderbackground = document.getElementById("lds-roller");
-const uri = process.env.DEV ? process.env.REACT_APP_API_URL : "https://apimodelsaber.rainemods.io";
+const uri = !process.env.DEV ? process.env.REACT_APP_API_URL : "https://apimodelsaber.rainemods.io";
 export const mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
 class Index extends Component {
